@@ -1,0 +1,9 @@
+D:\George\SkyDrive\My Projects\C#\SolarSystem\SolarSystem\bin\Debug\SolarSystem.exe.config
+D:\George\SkyDrive\My Projects\C#\SolarSystem\SolarSystem\bin\Debug\SolarSystem.exe
+D:\George\SkyDrive\My Projects\C#\SolarSystem\SolarSystem\bin\Debug\SolarSystem.pdb
+D:\George\SkyDrive\My Projects\C#\SolarSystem\SolarSystem\obj\Debug\SolarSystem.csprojResolveAssemblyReference.cache
+D:\George\SkyDrive\My Projects\C#\SolarSystem\SolarSystem\obj\Debug\WindowsFormsApplication3.Form1.resources
+D:\George\SkyDrive\My Projects\C#\SolarSystem\SolarSystem\obj\Debug\SolarSystem.Properties.Resources.resources
+D:\George\SkyDrive\My Projects\C#\SolarSystem\SolarSystem\obj\Debug\SolarSystem.csproj.GenerateResource.Cache
+D:\George\SkyDrive\My Projects\C#\SolarSystem\SolarSystem\obj\Debug\SolarSystem.exe
+D:\George\SkyDrive\My Projects\C#\SolarSystem\SolarSystem\obj\Debug\SolarSystem.pdb
