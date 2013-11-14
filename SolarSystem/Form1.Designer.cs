@@ -1,4 +1,4 @@
-﻿namespace WindowsFormsApplication3 {
+﻿namespace SolarSystem {
     partial class Form1 {
         /// <summary>
         /// Required designer variable.
@@ -35,9 +35,8 @@
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(274, 66);
+            this.textBox1.Size = new System.Drawing.Size(313, 66);
             this.textBox1.TabIndex = 1;
-            this.textBox1.Text = "123";
             // 
             // Form1
             // 
@@ -47,7 +46,7 @@
             this.ClientSize = new System.Drawing.Size(971, 519);
             this.Controls.Add(this.textBox1);
             this.Name = "Form1";
-            this.Text = "My Galaxy";
+            this.Text = "My Solar System";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);

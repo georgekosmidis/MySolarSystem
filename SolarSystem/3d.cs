@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WindowsFormsApplication3 {
+namespace SolarSystem {
     class _3d {
         public double x;
         public double y;

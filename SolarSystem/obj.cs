@@ -6,12 +6,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace WindowsFormsApplication3 {
+namespace SolarSystem {
     class obj {
 
         private int SUNS_NUM = 1;
-        private int SUNS_MASS_MULTIPLIER = 1000;
-        private double PLANE_MASS_MULTIPLIER = 0.1;
+        private int SUNS_MASS_MULTIPLIER = 2000;
+        private double PLANE_MASS_MULTIPLIER = 0.2;
         private bool SHOW_TAIL = true;
         private int TAIL_SIZE = 10;
         private int STRAY_LIMIT = 10000;
@@ -44,7 +44,7 @@ namespace WindowsFormsApplication3 {
             this.id = i;
 
             if (i < SUNS_NUM) {//number of suns, SUPPORTS ONLY 1
-                this.m = r.Next( 2, 50 ) * SUNS_MASS_MULTIPLIER;
+                this.m = r.Next( 10, 20 ) * SUNS_MASS_MULTIPLIER;
                 this.r = m / SUNS_MASS_MULTIPLIER / 2;//Math.Log10( m );
                 if (i == 0) {
                     this.p.x = w / 2;
@@ -75,8 +75,8 @@ namespace WindowsFormsApplication3 {
                 //this.v.y = 1;
                 //this.v.z = 0;
 
-                this.m = r.Next( 2, 50 ) * PLANE_MASS_MULTIPLIER;
-                this.r = m  / 2;//Math.Log10( m );
+                this.m = r.Next( 1, 200 ) * PLANE_MASS_MULTIPLIER;
+                this.r = Math.Log10( m /PLANE_MASS_MULTIPLIER );
             }
         }
 

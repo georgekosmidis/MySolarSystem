@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace WindowsFormsApplication3 {
+namespace SolarSystem {
     public partial class Form1 : Form {
 
         public int NUM_OBJECTS = 500;
@@ -62,7 +62,7 @@ namespace WindowsFormsApplication3 {
         }
         private void Form1_Paint( object sender, PaintEventArgs e ) {
             var m = new List<obj>();
-            
+
             for (var i = 0; i < _objects.Count; i++) {
                 var oi = _objects[i];
                 if (i > 0 && oi.isStray()) {
@@ -99,9 +99,9 @@ namespace WindowsFormsApplication3 {
             var oh = _objects[0];
             for (var i = 1; i < _objects.Count; i++) {
                 oh = oh.m > _objects[i].m ? oh : _objects[i];
-               // oh.s = false;
+                // oh.s = false;
             }
-            
+
             obj.sun = oh;
 
             for (var i = 0; i < _objects.Count; i++) {
@@ -112,22 +112,25 @@ namespace WindowsFormsApplication3 {
                 oi.v.y -= oh.v.y;
                 oi.v.z -= oh.v.z;
             }
-            
+
             oh.p.x = _center.x;
             oh.p.y = _center.y;
             oh.p.z = _center.z;
             oh.v.x = 0;
             oh.v.y = 0;
             oh.v.z = 0;
-          
+
         }
 
         public void WriteTextBox( string value ) {
-            if (InvokeRequired) {
-                this.Invoke( new Action<string>( WriteTextBox ), new object[] { value } );
-                return;
+            try {
+                if (InvokeRequired) {
+                    this.Invoke( new Action<string>( WriteTextBox ), new object[] { value } );
+                    return;
+                }
+                textBox1.Text = value;
             }
-            textBox1.Text = value;
+            catch { }
         }
 
         #region Stats
@@ -147,10 +150,10 @@ namespace WindowsFormsApplication3 {
                 oh = oh.m > _objects[i].m ? oh : _objects[i];
                 // oh.s = false;
             }
-            
+
             for (var i = 0; i < _objects.Count; i++) {
                 var oi = _objects[i];
-                if(oi.id == oh.id)
+                if (oi.id == oh.id)
                     continue;
                 //distance
                 var dx = oh.p.x - oi.p.x;
