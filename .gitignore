@@ -1,8 +1,5 @@
 # Compiled source #
 ###################
-*.dll
-*.exe
-*.pdb
 bin/
 obj/
 
