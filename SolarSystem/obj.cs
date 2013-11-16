@@ -9,18 +9,18 @@ using System.Windows.Forms;
 namespace SolarSystem {
     class obj {
 
-        private int SUNS_NUM = 1;
-        private int SUNS_MASS_MULTIPLIER = 2000;
-        private double PLANE_MASS_MULTIPLIER = 0.2;
+        private double SUN_MASS_MULTIPLIER = 10000;
+        private double PLANET_MASS_MULTIPLIER = 0.2;
         private bool SHOW_TAIL = true;
-        private int TAIL_SIZE = 10;
-        private int STRAY_LIMIT = 10000;
-        private int COLLISION_DISTANCE = 10;
+        private int TAIL_SIZE = 20;
+        //private int STRAY_LIMIT = 10000;
+        private double STRAY_LIMIT_FORCE = 0.0001;
+        private int COLLISION_DISTANCE = 50;
         private double GRAVITY = 0.6674;
         private double FRICTION = 0.001;
-        private double FRICTION_FROM_SPEED = 15;
+        private double FRICTION_FROM_SPEED = 20;
 
-        private SolidBrush SUN_INNER = new SolidBrush( Color.Red );
+        private SolidBrush SUN_INNER = new SolidBrush( Color.Yellow );
         private SolidBrush SUN_RING = new SolidBrush( Color.Orange );
 
         private SolidBrush PLANET_INNER = new SolidBrush( Color.SkyBlue );
@@ -30,7 +30,7 @@ namespace SolarSystem {
         public _3d v = new _3d();
         private List<_3d> t = new List<_3d>();
         public double m = 0;//mass
-        private double r = 0;//radius
+        public double r = 0;//radius
         // public bool s = false;//is sun
         public int id = 0;
         public static obj sun;
@@ -40,12 +40,11 @@ namespace SolarSystem {
         /// </summary>
         /// <param name="i">obj id</param>
         /// <param name="w">form width</param>
-        public obj( int i, int w, int h, Random r ) {
+        public obj( int i, int w, int h, Random r, bool isSun = false ) {
             this.id = i;
-
-            if (i < SUNS_NUM) {//number of suns, SUPPORTS ONLY 1
-                this.m = r.Next( 10, 20 ) * SUNS_MASS_MULTIPLIER;
-                this.r = m / SUNS_MASS_MULTIPLIER / 2;//Math.Log10( m );
+            if (isSun) {
+                this.m = r.Next( 1, 2 ) * SUN_MASS_MULTIPLIER;
+                this.r = Math.Log10( m );
                 if (i == 0) {
                     this.p.x = w / 2;
                     this.p.y = h / 2;
@@ -68,18 +67,15 @@ namespace SolarSystem {
                 this.v.y = r.Next( -4, 4 );
                 this.v.z = r.Next( -4, 4 );
 
-                //this.p.x = w / 2;
-                //this.p.y = 0;
-                //this.p.z = 200;
-                //this.v.x = 0;
-                //this.v.y = 1;
-                //this.v.z = 0;
-
-                this.m = r.Next( 1, 200 ) * PLANE_MASS_MULTIPLIER;
-                this.r = Math.Log10( m /PLANE_MASS_MULTIPLIER );
+               
+                this.m = r.Next( 2, 50 ) * PLANET_MASS_MULTIPLIER;
+                this.r = Math.Log10( m / PLANET_MASS_MULTIPLIER );
             }
         }
-
+        public void resetMass( double nm ) {
+            this.m = nm;
+            this.r = Math.Log10( m );
+        }
         public void draw( PaintEventArgs e ) {
             e.Graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
             /*sun is bigger*/
@@ -115,10 +111,9 @@ namespace SolarSystem {
                         Ellipse( e, sbt, np, (float)this.t[i].x - (nd / 2), (float)this.t[i].y - (nd / 2), nd );
 
                     }
-
             }
         }
-        private void Ellipse( PaintEventArgs e, SolidBrush pb, Pen p, float x, float y, float d ) {
+        public void Ellipse( PaintEventArgs e, SolidBrush pb, Pen p, float x, float y, float d ) {
             //don't draw outside screen
             if (x < 0
                 || x > e.ClipRectangle.Width
@@ -141,8 +136,9 @@ namespace SolarSystem {
             double dz = this.p.z - o.p.z;
             var d = dx * dx + dy * dy + dz * dz;
             if (Math.Abs( d ) <= this.r + o.r + COLLISION_DISTANCE) {
-                this.m += o.m;
-                this.r += 1;//Math.Log( o.m ) / 2;
+                var oo = (this.m > o.m) ? this : o;//biggest takes mass
+                oo.m += o.m;
+                oo.r += 1;
                 return true;
             }
             return false;
@@ -172,13 +168,22 @@ namespace SolarSystem {
             o.v.z += accel2 * dz;
 
         }
-        public bool isStray() {
-            var o0 = sun;
-            var dx = o0.p.x - this.p.x;
-            var dy = o0.p.y - this.p.y;
-            var dz = o0.p.z - this.p.z;
-            var d = Math.Sqrt( dx * dx + dy * dy + dz * dz );
-            return (Math.Abs( d ) > STRAY_LIMIT);
+        public bool isStray(  ) {
+            //var o0 = sun;
+            //var dx = o0.p.x - this.p.x;
+            //var dy = o0.p.y - this.p.y;
+            //var dz = o0.p.z - this.p.z;
+            //var d = Math.Sqrt( dx * dx + dy * dy + dz * dz );
+            //return (Math.Abs( d ) > STRAY_LIMIT);
+
+            double dx = this.p.x - sun.p.x;
+            double dy = this.p.y - sun.p.y;
+            double dz = this.p.z - sun.p.z;
+            var d = dx * dx + dy * dy + dz * dz;
+
+            var force = GRAVITY * this.m * sun.m / d;
+            return( force / this.m < STRAY_LIMIT_FORCE);
+            
         }
         public void move() {
 

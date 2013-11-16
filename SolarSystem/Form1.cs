@@ -11,6 +11,7 @@ using System.Windows.Forms;
 namespace SolarSystem {
     public partial class Form1 : Form {
 
+        private int SUNS_NUM = 1;
         public int NUM_OBJECTS = 500;
         public double ROTATE_RATE = 0.001;
         public int FPS = 20;//frames per second
@@ -29,13 +30,20 @@ namespace SolarSystem {
 
             aTimer = new System.Timers.Timer( 1000 / FPS );
             aTimer.Elapsed += aTimer_Elapsed;
-            aTimer.Enabled = true;
 
             Random r = new Random( (int)DateTime.Now.Ticks );
+            var gm = 0.000001;
             for (var i = 0; i < NUM_OBJECTS; i++) {
                 var o = new obj( i, this.Width, this.Height, r );
+                gm += o.m;
                 _objects.Add( o );
             }
+            for (var i = NUM_OBJECTS; i < NUM_OBJECTS + SUNS_NUM; i++) {
+                var o = new obj( i, this.Width, this.Height, r, true );
+                // o.resetMass( gm * r.Next( 10, 20 ) );//from 10 to 20 times the mass of the galaxy
+                _objects.Add( o );
+            }
+            aTimer.Enabled = true;
 
             _center.set( this.Width / 2, this.Height / 2, (this.Width + this.Height) / 2 );
             FindAndCenterSun();
@@ -65,6 +73,8 @@ namespace SolarSystem {
 
             for (var i = 0; i < _objects.Count; i++) {
                 var oi = _objects[i];
+                if (m.Contains( oi ))
+                    continue;
                 if (i > 0 && oi.isStray()) {
                     m.Add( oi );
                 }
@@ -77,12 +87,16 @@ namespace SolarSystem {
                                 oi.acc( oj );
                             }
                             else {
-                                m.Add( _objects[j] );
+                                var oo = (oi.m < oj.m) ? oi : oj;//smallest goes
+                                m.Add( oo );
+                                var d = (float)(oo.r * 10);//smallest to 10, size of explosion
+                                oo.Ellipse( e, (new SolidBrush( Color.Red )), (new Pen( Color.Yellow )), (float)oo.p.x - d / 2, (float)oo.p.y - d / 2, d );
                             }
                         }
+
+                        oi.move();
+                        oi.friction();
                     }
-                    oi.move();
-                    oi.friction();
                 }
                 oi.draw( e );
             }
@@ -198,12 +212,12 @@ namespace SolarSystem {
 
         _3d pm = new _3d();
         private void Form1_MouseMove( object sender, MouseEventArgs e ) {
-            if (IsMouseDown) {
-                //rotateY3D( -(pm.x - e.X) * ROTATE_RATE );
-                //rotateX3D( (pm.y - e.Y) * ROTATE_RATE );
-                this.Invalidate();
-            }
-            pm.set( e.X, e.Y, 0 );
+            //if (IsMouseDown) {
+            //    rotateY3D( -(pm.x - e.X) * ROTATE_RATE );
+            //    rotateX3D( (pm.y - e.Y) * ROTATE_RATE );
+            //    this.Invalidate();
+            //}
+            //pm.set( e.X, e.Y, 0 );
         }
 
         private void rotateY3D( double theta ) {
