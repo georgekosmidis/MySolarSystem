@@ -9,34 +9,31 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SolarSystem {
-    public partial class Form1 : Form {
+    public partial class SolarSystem : Form {
 
-        private int SUNS_NUM = 1;
-        public int NUM_OBJECTS = 500;
-        public double ROTATE_RATE = 0.001;
-        public int FPS = 20;//frames per second
+        private bool IsMouseDown = false;
+        private System.Timers.Timer aTimer;
+        private _3d _center = new _3d();
+        private List<obj> _objects = new List<obj>();
 
-        bool IsMouseDown = false;
-        System.Timers.Timer aTimer;
-        _3d _center = new _3d();
-        List<obj> _objects = new List<obj>();
+        private obj objBigger;
+        private obj objFaster;
 
-        public Form1() {
+        public SolarSystem() {
             InitializeComponent();
-
             this.Width = Screen.PrimaryScreen.WorkingArea.Width;
             this.Height = Screen.PrimaryScreen.WorkingArea.Height;
             this.DoubleBuffered = true;
 
-            aTimer = new System.Timers.Timer( 1000 / FPS );
+            aTimer = new System.Timers.Timer( 1000 / GLOBALS.FPS );
             aTimer.Elapsed += aTimer_Elapsed;
 
-            Random r = new Random( (int)DateTime.Now.Ticks );
-            for (var i = 0; i < SUNS_NUM; i++) {
+            Random r = new Random( GLOBALS.SEED );
+            for (var i = 0; i < GLOBALS.SUNS_NUM; i++) {
                 var o = new obj( i, this.Width, this.Height, r, true );
                 _objects.Add( o );
             }
-            for (var i = SUNS_NUM; i < NUM_OBJECTS + SUNS_NUM; i++) {
+            for (var i = GLOBALS.SUNS_NUM; i < GLOBALS.NUM_OBJECTS + GLOBALS.SUNS_NUM; i++) {
                 var o = new obj( i, this.Width, this.Height, r );
                 _objects.Add( o );
             }
@@ -44,12 +41,10 @@ namespace SolarSystem {
             aTimer.Enabled = true;
 
             _center.set( this.Width / 2, this.Height / 2, (this.Width + this.Height) / 2 );
-            FindSunAndCenter();
         }
 
         void aTimer_Elapsed( object sender, System.Timers.ElapsedEventArgs e ) {
             Invalidate();
-            WriteStats();
         }
         private void Form1_Resize( object sender, EventArgs e ) {
             var _newCenter = new _3d();
@@ -66,11 +61,13 @@ namespace SolarSystem {
 
             textBox1.SetBounds( textBox1.Location.X, this.Height - 100, textBox1.Width, textBox1.Height );
         }
+        private int iYears = 0;
         private void Form1_Paint( object sender, PaintEventArgs e ) {
             var m = new List<obj>();
             if (IsMouseDown)
                 return;
-
+            FindAndCenter( e );
+            iYears++;
             for (var i = 0; i < _objects.Count; i++) {
                 var oi = _objects[i];
                 if (m.Contains( oi ))
@@ -90,42 +87,37 @@ namespace SolarSystem {
                             var oo = (oi.m < oj.m) ? oi : oj;//smallest goes
                             m.Add( oo );
                             var d = (float)(oo.r * 10);//smallest to 10, size of explosion
-                            oo.Ellipse( e, (new SolidBrush( Color.Red )), (new Pen( Color.Yellow )), (float)oo.p.x - d / 2, (float)oo.p.y - d / 2, d );
+                            var np = new Pen( Color.FromArgb( 255, GLOBALS.EXPLOSION_RING.Color.R, GLOBALS.EXPLOSION_RING.Color.G, GLOBALS.EXPLOSION_RING.Color.B ), 1 );
+                            oo.Ellipse( e, GLOBALS.EXPLOSION_INNER, np, (float)oo.p.x - d / 2, (float)oo.p.y - d / 2, d );
                         }
                     }
 
                     oi.move();
                     oi.friction();
                 }
-
                 oi.draw( e );
             }
             foreach (var o in m) {
                 _objects.Remove( o );
             }
-            FindSunAndCenter();
+
+            WriteStats();
         }
 
         /************************************/
 
-        private void FindSunAndCenter() {
-            double x = 0, y = 0, z = 0, m = 0;
+        private void FindAndCenter( PaintEventArgs e ) {
 
-            //gather mass 
-            for (var i = 0; i < _objects.Count; i++) {
-                var o = _objects[i];
-                m += o.m;
-                x += o.m * o.p.x;
-                y += o.m * o.p.y;
-                z += o.m * o.p.z;
-            }
-            x /= m;
-            y /= m;
-            z /= m;
+            double am = 0;//_objects.Where( o => !o.s ).Average( o => o.m );
+            double m = _objects.Where( o => o.m >= am ).Sum( o => o.m );
+            double x = _objects.Where( o => o.m >= am ).Sum( o => o.m * o.p.x ) / m;
+            double y = _objects.Where( o => o.m >= am ).Sum( o => o.m * o.p.y ) / m;
+            double z = _objects.Where( o => o.m >= am ).Sum( o => o.m * o.p.z ) / m;
+
+          //  var p = new Pen( Color.WhiteSmoke );
+          //  e.Graphics.DrawEllipse( p, (float)x, (float)y, 10, 10 );
 
             double md = double.PositiveInfinity;
-            double mm = 0;
-
             //move screen to mass
             for (var i = 0; i < _objects.Count; i++) {
                 var o = _objects[i];
@@ -143,25 +135,9 @@ namespace SolarSystem {
                     md = d;
                     obj.cntr = o;
                 }
-                if (m > mm) {
-                    m = mm;
-                    obj.sun = o;
-                }
             }
         }
 
-        public void WriteTextBox( string value ) {
-            try {
-                if (InvokeRequired) {
-                    this.Invoke( new Action<string>( WriteTextBox ), new object[] { value } );
-                    return;
-                }
-                textBox1.Text = value;
-            }
-            catch { }
-        }
-
-        #region Stats
         private void WriteStats() {
             double dco = double.MaxValue;//closest object to sun
             double dfo = double.MinValue;//farthest object
@@ -173,26 +149,17 @@ namespace SolarSystem {
             double mso = double.MaxValue;//mass smallest object
             double ma = 0;//avg mass speed
 
-            var oh = _objects[0];
-            for (var i = 1; i < _objects.Count; i++) {
-                oh = oh.m > _objects[i].m ? oh : _objects[i];
-                // oh.s = false;
-            }
-
             for (var i = 0; i < _objects.Count; i++) {
                 var oi = _objects[i];
-                if (oi.id == oh.id)
+                if (oi.s)
                     continue;
                 //distance
-                var dx = oh.p.x - oi.p.x;
-                var dy = oh.p.y - oi.p.y;
-                var dz = oh.p.z - oi.p.z;
-                var d = Math.Sqrt( dx * dx + dy * dy + dz * dz );//distance from sun
+                var d = oi.distance( obj.cntr );
                 dco = dco < d ? dco : d;
                 dfo = dfo > d ? dfo : d;
                 da += d;
                 //speed
-                var s = Math.Sqrt( oi.v.x * oi.v.x + oi.v.y * oi.v.y + oi.v.z * oi.v.z ); //speed
+                var s = oi.speed();
                 sfo = sfo > s ? sfo : s;
                 sso = sso < s ? sso : s;
                 sa += s;
@@ -205,14 +172,30 @@ namespace SolarSystem {
             sa /= _objects.Count - 1;
             ma /= _objects.Count - 1;
 
+            //write stats
             var txt = " Objects: " + _objects.Count.ToString();
             txt += Environment.NewLine + " Speed Min/Max/Avg: " + sso.ToString( "#.00" ) + " / " + sfo.ToString( "#.00" ) + " / " + sa.ToString( "#.00" );
             txt += Environment.NewLine + " Distance Min/Max/Avg: " + dco.ToString( "#.00" ) + " / " + dfo.ToString( "#.00" ) + " / " + da.ToString( "#.00" );
-            txt += Environment.NewLine + " Mass Sun/Min/Max/Avg: " + oh.m.ToString( "#.00" ) + " / " + mso.ToString( "#.00" ) + " / " + mbo.ToString( "#.00" ) + " / " + ma.ToString( "#.00" );
+            try {
+                txt += Environment.NewLine + " Mass Sun/Min/Max/Avg: " + _objects.Where( o => o.s ).FirstOrDefault().m.ToString( "#.00" ) + " / " + mso.ToString( "#.00" ) + " / " + mbo.ToString( "#.00" ) + " / " + ma.ToString( "#.00" );
+            }
+            catch {
+                txt += Environment.NewLine + " Mass Min/Max/Avg: " + mso.ToString( "#.00" ) + " / " + mbo.ToString( "#.00" ) + " / " + ma.ToString( "#.00" );
+
+            }
             WriteTextBox( txt );
         }
+        public void WriteTextBox( string value ) {
+            try {
+                if (InvokeRequired) {
+                    this.Invoke( new Action<string>( WriteTextBox ), new object[] { value } );
+                    return;
+                }
+                textBox1.Text = value;
+            }
+            catch { }
+        }
 
-        #endregion
 
         private void Form1_MouseDown( object sender, MouseEventArgs e ) {
             aTimer.Enabled = false;

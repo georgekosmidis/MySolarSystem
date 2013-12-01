@@ -1,5 +1,5 @@
 ﻿namespace SolarSystem {
-    partial class Form1 {
+    partial class SolarSystem {
         /// <summary>
         /// Required designer variable.
         /// </summary>

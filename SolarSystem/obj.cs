@@ -9,33 +9,6 @@ using System.Windows.Forms;
 namespace SolarSystem {
     class obj {
 
-        //mass and speed
-        private static double SUN_MASS_MULTIPLIER = 250;//mass multiplier of sun
-        private static double PLANET_INITIAL_SPEED = 15;//bigger sun, bigger speed to escape gravity
-        private static double PLANET_MASS_MULTIPLIER = 20;
-        private static double SPHERE_SIZE = 1;// times screen height
-
-        //tail
-        private static bool SHOW_TAIL = false;
-        private static int TAIL_SIZE = 20;
-
-        //remove planets
-        private static int STRAY_LIMIT = 100000;//remove objects far away
-        private static double COLLISION_THRESHOLD = 0.5;//collide threshold
-        private static double GRAVITY = 0.6674;
-
-        //friction
-        private static double FRICTION = 0.001;//friction
-        private static double FRICTION_FROM_SPEED = 200;//apply to super fast objects
-
-        //colors
-        private static SolidBrush SUN_INNER = new SolidBrush( Color.Yellow );
-        private static SolidBrush SUN_RING = new SolidBrush( Color.Orange );
-        private static SolidBrush PLANET_INNER = new SolidBrush( Color.SkyBlue );
-        private static SolidBrush PLANET_RING = new SolidBrush( Color.LightSkyBlue );
-
-
-
         public _3d p = new _3d();//position
         public _3d v = new _3d();//velocity
         private List<_3d> t = new List<_3d>();//tail
@@ -43,27 +16,30 @@ namespace SolarSystem {
         public double r = 0;//radius
         public int id = 0;
         public static obj cntr;//centered object, everyone goes arround this one
-        public static obj sun;//everybody knows sun
+        public bool s = false;//is sun
+        private int sphereRadius = 600;
 
         public obj( int i, int w, int h, Random r, bool isSun = false ) {
             this.id = i;
+            s = isSun;
+            sphereRadius = w > h ? h : w;
 
             var phi = this.random( r ) * 360;
             var theta = Math.Acos( this.random( r ) * 2 - 1 );
-            var ra = (h / (2 / SPHERE_SIZE) * Math.Pow( this.random( r ), ((double)1) / 3 ));
+            var ra = (sphereRadius / (2 / GLOBALS.SPHERE_SIZE) * Math.Pow( this.random( r ), ((double)1) / 3 ));
             this.p.x = ra * Math.Sin( theta ) * Math.Cos( phi ) + w / 2;
             this.p.y = ra * Math.Sin( theta ) * Math.Sin( phi ) + h / 2;
-            this.p.z = ra * Math.Cos( theta ) + ((w + h) / 4);
+            this.p.z = ra * Math.Cos( theta ) + (sphereRadius / 2);
 
-            var d = PLANET_INITIAL_SPEED / Math.Sqrt( this.p.x * this.p.x + this.p.y * this.p.y );
-            this.v.x = this.random( r ) * d * (this.p.y - h / 2);
-            this.v.y = this.random( r ) * d * -(this.p.x - w / 2);
-            this.v.z = this.random( r ) * 0.2 - 0.1; ;
+            var d = GLOBALS.PLANET_INITIAL_SPEED / Math.Sqrt( this.p.x * this.p.x + this.p.y * this.p.y );
+            this.v.x = this.random( r ) * d * (this.p.y - w / 2);
+            this.v.y = this.random( r ) * d * -(this.p.x - h / 2);
+            this.v.z = this.random( r ) * d * -(this.p.z - sphereRadius / 2);
 
-            this.m = random( r ) * PLANET_MASS_MULTIPLIER;
+            this.m = random( r ) * GLOBALS.PLANET_MASS_MULTIPLIER;
 
             if (isSun) {
-                this.m = (random( r ) + 0.5) * SUN_MASS_MULTIPLIER;
+                this.m = (random( r ) + 0.5) * GLOBALS.SUN_MASS_MULTIPLIER;
                 if (i == 0) {
                     this.p.x = w / 2;
                     this.p.y = h / 2;
@@ -84,9 +60,9 @@ namespace SolarSystem {
         public void draw( PaintEventArgs e ) {
             e.Graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
             /*sun is bigger*/
-            if (this.id == sun.id) {
-                var ssb = new SolidBrush( Color.FromArgb( 255, SUN_INNER.Color.R, SUN_INNER.Color.G, SUN_INNER.Color.B ) );
-                var sp = new Pen( Color.FromArgb( 255, SUN_RING.Color.R, SUN_RING.Color.G, SUN_RING.Color.B ), 1 );
+            if (this.s) {
+                var ssb = new SolidBrush( Color.FromArgb( 255, GLOBALS.SUN_INNER.Color.R, GLOBALS.SUN_INNER.Color.G, GLOBALS.SUN_INNER.Color.B ) );
+                var sp = new Pen( Color.FromArgb( 255, GLOBALS.SUN_RING.Color.R, GLOBALS.SUN_RING.Color.G, GLOBALS.SUN_RING.Color.B ), 1 );
 
                 var d = (float)this.r * 2;
                 var x = (float)(this.p.x - (d / 2));
@@ -100,23 +76,22 @@ namespace SolarSystem {
                 var a = (int)Math.Round( Math.Min( Math.Max( 0, this.p.z ), cntr.p.z ) * 255 / cntr.p.z );//transarent when away
                 a = a < 0 ? 0 : a;
 
-                var sb = new SolidBrush( Color.FromArgb( a, PLANET_INNER.Color.R, PLANET_INNER.Color.G, PLANET_INNER.Color.B ) );
+                var sb = new SolidBrush( Color.FromArgb( a, GLOBALS.PLANET_INNER.Color.R, GLOBALS.PLANET_INNER.Color.G, GLOBALS.PLANET_INNER.Color.B ) );
 
-                var p = new Pen( Color.FromArgb( a, PLANET_RING.Color.R, PLANET_RING.Color.G, PLANET_RING.Color.B ), 1 );
+                var p = new Pen( Color.FromArgb( a, GLOBALS.PLANET_RING.Color.R, GLOBALS.PLANET_RING.Color.G, GLOBALS.PLANET_RING.Color.B ), 1 );
                 var x = (float)(this.p.x - (d / 2));
                 var y = (float)(this.p.y - (d / 2));
 
                 Ellipse( e, sb, p, x, y, d );
 
-                if (SHOW_TAIL)
+                if (GLOBALS.SHOW_TAIL)
                     for (var i = 0; i < this.t.Count; i++) {
-                        var na = (int)Math.Round( a * ((1 - ((double)i / TAIL_SIZE)) * 0.5) );
-                        var sbt = new SolidBrush( Color.FromArgb( na, PLANET_INNER.Color.R, PLANET_INNER.Color.G, PLANET_INNER.Color.B ) );
-                        var np = new Pen( Color.FromArgb( na, PLANET_INNER.Color.R, PLANET_INNER.Color.G, PLANET_INNER.Color.B ), 1 );
-                        var nd = d * (1 - ((float)i / TAIL_SIZE));
+                        var na = (int)Math.Round( a * ((1 - ((double)i / GLOBALS.TAIL_SIZE)) * 0.5) );
+                        var sbt = new SolidBrush( Color.FromArgb( na, GLOBALS.PLANET_INNER.Color.R, GLOBALS.PLANET_INNER.Color.G, GLOBALS.PLANET_INNER.Color.B ) );
+                        var np = new Pen( Color.FromArgb( na, GLOBALS.PLANET_INNER.Color.R, GLOBALS.PLANET_INNER.Color.G, GLOBALS.PLANET_INNER.Color.B ), 1 );
+                        var nd = d * (1 - ((float)i / GLOBALS.TAIL_SIZE));
 
                         Ellipse( e, sbt, np, (float)this.t[i].x - (nd / 2), (float)this.t[i].y - (nd / 2), nd );
-
                     }
             }
         }
@@ -142,7 +117,7 @@ namespace SolarSystem {
             double dy = this.p.y - o.p.y;
             double dz = this.p.z - o.p.z;
             var d = dx * dx + dy * dy + dz * dz;
-            if (Math.Abs( d ) <= (this.r + o.r) * COLLISION_THRESHOLD) {
+            if (Math.Abs( d ) <= (this.r + o.r) * GLOBALS.COLLISION_THRESHOLD) {
                 //new mass
                 var mass = this.m + o.m;
                 //find biggest
@@ -155,23 +130,28 @@ namespace SolarSystem {
             }
             return false;
         }
-        private double speed() {
-            var s = Math.Sqrt( this.v.x * this.v.x + this.v.y * this.v.y + this.v.z * this.v.z );
-            return Math.Round( s );
+        public double speed() {
+            return Math.Sqrt( this.v.x * this.v.x + this.v.y * this.v.y + this.v.z * this.v.z );
+            //return Math.Round( s );
         }
-        public void acc( obj o ) {
+        public double distance( obj o ) {
             double dx = this.p.x - o.p.x;
             double dy = this.p.y - o.p.y;
             double dz = this.p.z - o.p.z;
-            var d = dx * dx + dy * dy + dz * dz;
+            return dx * dx + dy * dy + dz * dz;
+        }
+        public void acc( obj o ) {
 
-            var force = GRAVITY * this.m * o.m / d;
+            var d = this.distance( o );
+
+            var force = GLOBALS.GRAVITY * this.m * o.m / d;
             var accel1 = force / this.m;
             var accel2 = force / o.m;
 
-            dx /= Math.Sqrt( d );
-            dy /= Math.Sqrt( d );
-            dz /= Math.Sqrt( d );
+            double dx = (this.p.x - o.p.x) / Math.Sqrt( d );
+            double dy = (this.p.y - o.p.y) / Math.Sqrt( d );
+            double dz = (this.p.z - o.p.z) / Math.Sqrt( d );
+
             this.v.x -= accel1 * dx;
             this.v.y -= accel1 * dy;
             this.v.z -= accel1 * dz;
@@ -181,21 +161,7 @@ namespace SolarSystem {
 
         }
         public bool isStray() {
-            var o0 = cntr;
-            var dx = o0.p.x - this.p.x;
-            var dy = o0.p.y - this.p.y;
-            var dz = o0.p.z - this.p.z;
-            var d = Math.Sqrt( dx * dx + dy * dy + dz * dz );
-            return (Math.Abs( d ) > STRAY_LIMIT);
-
-            //double dx = this.p.x - sun.p.x;
-            //double dy = this.p.y - sun.p.y;
-            //double dz = this.p.z - sun.p.z;
-            //var d = dx * dx + dy * dy + dz * dz;
-
-            //var force = GRAVITY * this.m * sun.m / d;
-            //return (force / this.m < STRAY_LIMIT_FORCE);
-
+            return (Math.Abs( this.distance( obj.cntr) ) > GLOBALS.STRAY_LIMIT);
         }
         public void move() {
 
@@ -210,13 +176,13 @@ namespace SolarSystem {
             this.t.Add( tmp );
             this.t.Reverse();
 
-            if (this.t.Count > TAIL_SIZE)
-                this.t.RemoveRange( TAIL_SIZE, this.t.Count - TAIL_SIZE );
+            if (this.t.Count > GLOBALS.TAIL_SIZE)
+                this.t.RemoveRange( GLOBALS.TAIL_SIZE, this.t.Count - GLOBALS.TAIL_SIZE );
 
         }
         public void friction() {
-            var friction = this.speed() * FRICTION;
-            if (this.speed() > FRICTION_FROM_SPEED) {
+            var friction = this.speed() * GLOBALS.FRICTION;
+            if (this.speed() > GLOBALS.FRICTION_FROM_SPEED) {
                 this.v.x *= (1 - friction);
                 this.v.y *= (1 - friction);
                 this.v.z *= (1 - friction);
