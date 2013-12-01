@@ -32,21 +32,19 @@ namespace SolarSystem {
             aTimer.Elapsed += aTimer_Elapsed;
 
             Random r = new Random( (int)DateTime.Now.Ticks );
-            var gm = 0.000001;
-            for (var i = 0; i < NUM_OBJECTS; i++) {
-                var o = new obj( i, this.Width, this.Height, r );
-                gm += o.m;
-                _objects.Add( o );
-            }
-            for (var i = NUM_OBJECTS; i < NUM_OBJECTS + SUNS_NUM; i++) {
+            for (var i = 0; i < SUNS_NUM; i++) {
                 var o = new obj( i, this.Width, this.Height, r, true );
-                // o.resetMass( gm * r.Next( 10, 20 ) );//from 10 to 20 times the mass of the galaxy
                 _objects.Add( o );
             }
+            for (var i = SUNS_NUM; i < NUM_OBJECTS + SUNS_NUM; i++) {
+                var o = new obj( i, this.Width, this.Height, r );
+                _objects.Add( o );
+            }
+
             aTimer.Enabled = true;
 
             _center.set( this.Width / 2, this.Height / 2, (this.Width + this.Height) / 2 );
-            FindAndCenterSun();
+            FindSunAndCenter();
         }
 
         void aTimer_Elapsed( object sender, System.Timers.ElapsedEventArgs e ) {
@@ -70,70 +68,86 @@ namespace SolarSystem {
         }
         private void Form1_Paint( object sender, PaintEventArgs e ) {
             var m = new List<obj>();
+            if (IsMouseDown)
+                return;
 
             for (var i = 0; i < _objects.Count; i++) {
                 var oi = _objects[i];
                 if (m.Contains( oi ))
                     continue;
+
                 if (i > 0 && oi.isStray()) {
                     m.Add( oi );
                 }
                 else {
-                    if (!IsMouseDown) {
-                        /*acc*/
-                        for (var j = i + 1; j < _objects.Count; j++) {
-                            var oj = _objects[j];
-                            if (!oi.isCollided( oj )) {
-                                oi.acc( oj );
-                            }
-                            else {
-                                var oo = (oi.m < oj.m) ? oi : oj;//smallest goes
-                                m.Add( oo );
-                                var d = (float)(oo.r * 10);//smallest to 10, size of explosion
-                                oo.Ellipse( e, (new SolidBrush( Color.Red )), (new Pen( Color.Yellow )), (float)oo.p.x - d / 2, (float)oo.p.y - d / 2, d );
-                            }
+                    /*acc*/
+                    for (var j = i + 1; j < _objects.Count; j++) {
+                        var oj = _objects[j];
+                        if (!oi.isCollided( oj )) {
+                            oi.acc( oj );
                         }
-
-                        oi.move();
-                        oi.friction();
+                        else {
+                            var oo = (oi.m < oj.m) ? oi : oj;//smallest goes
+                            m.Add( oo );
+                            var d = (float)(oo.r * 10);//smallest to 10, size of explosion
+                            oo.Ellipse( e, (new SolidBrush( Color.Red )), (new Pen( Color.Yellow )), (float)oo.p.x - d / 2, (float)oo.p.y - d / 2, d );
+                        }
                     }
+
+                    oi.move();
+                    oi.friction();
                 }
+
                 oi.draw( e );
             }
             foreach (var o in m) {
                 _objects.Remove( o );
             }
-            FindAndCenterSun();
+            FindSunAndCenter();
         }
 
         /************************************/
 
+        private void FindSunAndCenter() {
+            double x = 0, y = 0, z = 0, m = 0;
 
-        private void FindAndCenterSun() {
-            var oh = _objects[0];
-            for (var i = 1; i < _objects.Count; i++) {
-                oh = oh.m > _objects[i].m ? oh : _objects[i];
-                // oh.s = false;
-            }
-
-            obj.sun = oh;
-
+            //gather mass 
             for (var i = 0; i < _objects.Count; i++) {
-                var oi = _objects[i];
-                if (oh.id == oi.id)
-                    continue;
-                oi.v.x -= oh.v.x;
-                oi.v.y -= oh.v.y;
-                oi.v.z -= oh.v.z;
+                var o = _objects[i];
+                m += o.m;
+                x += o.m * o.p.x;
+                y += o.m * o.p.y;
+                z += o.m * o.p.z;
             }
+            x /= m;
+            y /= m;
+            z /= m;
 
-            oh.p.x = _center.x;
-            oh.p.y = _center.y;
-            oh.p.z = _center.z;
-            oh.v.x = 0;
-            oh.v.y = 0;
-            oh.v.z = 0;
+            double md = double.PositiveInfinity;
+            double mm = 0;
 
+            //move screen to mass
+            for (var i = 0; i < _objects.Count; i++) {
+                var o = _objects[i];
+                //move objects to center mass
+                o.p.x -= x - this.Width / 2;
+                o.p.y -= y - this.Height / 2;
+                o.p.z -= z - (this.Width + this.Height) / 4;
+
+                //find closest object to mass and set this as refernce
+                double dx = x - o.p.x;
+                double dy = y - o.p.y;
+                double dz = z - o.p.z;
+                var d = dx * dx + dy * dy + dz * dz;
+                if (d < md) {
+                    md = d;
+                    obj.cntr = o;
+                }
+                if (m > mm) {
+                    m = mm;
+                    obj.sun = o;
+                }
+            }
         }
 
         public void WriteTextBox( string value ) {
