@@ -61,26 +61,27 @@
             this.label19 = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.btnExplosionRing = new System.Windows.Forms.Button();
+            this.btnExplosion = new System.Windows.Forms.Button();
+            this.btnObjectRing = new System.Windows.Forms.Button();
+            this.btnObject = new System.Windows.Forms.Button();
+            this.label25 = new System.Windows.Forms.Label();
+            this.label24 = new System.Windows.Forms.Label();
+            this.label23 = new System.Windows.Forms.Label();
+            this.label22 = new System.Windows.Forms.Label();
+            this.btnSunRing = new System.Windows.Forms.Button();
+            this.btnSun = new System.Windows.Forms.Button();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.btnStart = new System.Windows.Forms.Button();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.lblObjMass = new System.Windows.Forms.Label();
+            this.label21 = new System.Windows.Forms.Label();
             this.lblMomentum = new System.Windows.Forms.Label();
             this.label20 = new System.Windows.Forms.Label();
             this.lblMass = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
-            this.label21 = new System.Windows.Forms.Label();
-            this.lblObjMass = new System.Windows.Forms.Label();
-            this.btnSun = new System.Windows.Forms.Button();
-            this.btnSunRing = new System.Windows.Forms.Button();
-            this.label22 = new System.Windows.Forms.Label();
-            this.label23 = new System.Windows.Forms.Label();
-            this.label24 = new System.Windows.Forms.Label();
-            this.label25 = new System.Windows.Forms.Label();
-            this.btnObject = new System.Windows.Forms.Button();
-            this.btnObjectRing = new System.Windows.Forms.Button();
-            this.btnExplosion = new System.Windows.Forms.Button();
-            this.btnExplosionRing = new System.Windows.Forms.Button();
+            this.chkRespawn = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numSuns)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numObjects)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -356,7 +357,7 @@
             // 
             this.numSunMass.Location = new System.Drawing.Point(95, 43);
             this.numSunMass.Maximum = new decimal(new int[] {
-            10000,
+            100000,
             0,
             0,
             0});
@@ -501,13 +502,14 @@
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.chkRespawn);
             this.groupBox4.Controls.Add(this.numCollision);
             this.groupBox4.Controls.Add(this.label12);
             this.groupBox4.Controls.Add(this.numStray);
             this.groupBox4.Controls.Add(this.label11);
             this.groupBox4.Location = new System.Drawing.Point(12, 174);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(165, 81);
+            this.groupBox4.Size = new System.Drawing.Size(165, 95);
             this.groupBox4.TabIndex = 20;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Object Annihilation";
@@ -520,7 +522,7 @@
             0,
             0,
             65536});
-            this.numCollision.Location = new System.Drawing.Point(77, 46);
+            this.numCollision.Location = new System.Drawing.Point(77, 65);
             this.numCollision.Maximum = new decimal(new int[] {
             1,
             0,
@@ -539,7 +541,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(6, 48);
+            this.label12.Location = new System.Drawing.Point(6, 67);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(57, 15);
             this.label12.TabIndex = 10;
@@ -585,7 +587,7 @@
             this.groupBox5.Controls.Add(this.label15);
             this.groupBox5.Location = new System.Drawing.Point(183, 174);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(172, 81);
+            this.groupBox5.Size = new System.Drawing.Size(172, 95);
             this.groupBox5.TabIndex = 21;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Friction";
@@ -694,6 +696,108 @@
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Colors";
             // 
+            // btnExplosionRing
+            // 
+            this.btnExplosionRing.BackColor = System.Drawing.Color.DarkRed;
+            this.btnExplosionRing.ForeColor = System.Drawing.Color.DarkRed;
+            this.btnExplosionRing.Location = new System.Drawing.Point(80, 163);
+            this.btnExplosionRing.Name = "btnExplosionRing";
+            this.btnExplosionRing.Size = new System.Drawing.Size(75, 23);
+            this.btnExplosionRing.TabIndex = 19;
+            this.btnExplosionRing.UseVisualStyleBackColor = false;
+            this.btnExplosionRing.Click += new System.EventHandler(this.btnExplosionRing_Click);
+            // 
+            // btnExplosion
+            // 
+            this.btnExplosion.BackColor = System.Drawing.Color.DarkRed;
+            this.btnExplosion.ForeColor = System.Drawing.Color.DarkRed;
+            this.btnExplosion.Location = new System.Drawing.Point(80, 134);
+            this.btnExplosion.Name = "btnExplosion";
+            this.btnExplosion.Size = new System.Drawing.Size(75, 23);
+            this.btnExplosion.TabIndex = 18;
+            this.btnExplosion.UseVisualStyleBackColor = false;
+            this.btnExplosion.Click += new System.EventHandler(this.btnExplosion_Click);
+            // 
+            // btnObjectRing
+            // 
+            this.btnObjectRing.BackColor = System.Drawing.Color.DarkRed;
+            this.btnObjectRing.ForeColor = System.Drawing.Color.DarkRed;
+            this.btnObjectRing.Location = new System.Drawing.Point(80, 105);
+            this.btnObjectRing.Name = "btnObjectRing";
+            this.btnObjectRing.Size = new System.Drawing.Size(75, 23);
+            this.btnObjectRing.TabIndex = 17;
+            this.btnObjectRing.UseVisualStyleBackColor = false;
+            this.btnObjectRing.Click += new System.EventHandler(this.btnObjectRing_Click);
+            // 
+            // btnObject
+            // 
+            this.btnObject.BackColor = System.Drawing.Color.DarkRed;
+            this.btnObject.ForeColor = System.Drawing.Color.DarkRed;
+            this.btnObject.Location = new System.Drawing.Point(80, 77);
+            this.btnObject.Name = "btnObject";
+            this.btnObject.Size = new System.Drawing.Size(75, 23);
+            this.btnObject.TabIndex = 16;
+            this.btnObject.UseVisualStyleBackColor = false;
+            this.btnObject.Click += new System.EventHandler(this.btnObject_Click);
+            // 
+            // label25
+            // 
+            this.label25.AutoSize = true;
+            this.label25.Location = new System.Drawing.Point(6, 167);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(74, 15);
+            this.label25.TabIndex = 15;
+            this.label25.Text = "Explon. Ring";
+            // 
+            // label24
+            // 
+            this.label24.AutoSize = true;
+            this.label24.Location = new System.Drawing.Point(6, 139);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(61, 15);
+            this.label24.TabIndex = 14;
+            this.label24.Text = "Explosion";
+            // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.Location = new System.Drawing.Point(6, 110);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(70, 15);
+            this.label23.TabIndex = 13;
+            this.label23.Text = "Object Ring";
+            // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.Location = new System.Drawing.Point(6, 81);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(43, 15);
+            this.label22.TabIndex = 12;
+            this.label22.Text = "Object";
+            // 
+            // btnSunRing
+            // 
+            this.btnSunRing.BackColor = System.Drawing.Color.DarkRed;
+            this.btnSunRing.ForeColor = System.Drawing.Color.DarkRed;
+            this.btnSunRing.Location = new System.Drawing.Point(80, 48);
+            this.btnSunRing.Name = "btnSunRing";
+            this.btnSunRing.Size = new System.Drawing.Size(75, 23);
+            this.btnSunRing.TabIndex = 11;
+            this.btnSunRing.UseVisualStyleBackColor = false;
+            this.btnSunRing.Click += new System.EventHandler(this.btnSunRing_Click);
+            // 
+            // btnSun
+            // 
+            this.btnSun.BackColor = System.Drawing.Color.DarkRed;
+            this.btnSun.ForeColor = System.Drawing.Color.DarkRed;
+            this.btnSun.Location = new System.Drawing.Point(80, 18);
+            this.btnSun.Name = "btnSun";
+            this.btnSun.Size = new System.Drawing.Size(75, 23);
+            this.btnSun.TabIndex = 10;
+            this.btnSun.UseVisualStyleBackColor = false;
+            this.btnSun.Click += new System.EventHandler(this.btnSun_Click);
+            // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.label3);
@@ -725,12 +829,30 @@
             this.groupBox7.Controls.Add(this.label20);
             this.groupBox7.Controls.Add(this.lblMass);
             this.groupBox7.Controls.Add(this.label17);
-            this.groupBox7.Location = new System.Drawing.Point(13, 255);
+            this.groupBox7.Location = new System.Drawing.Point(13, 275);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(342, 100);
+            this.groupBox7.Size = new System.Drawing.Size(342, 80);
             this.groupBox7.TabIndex = 23;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Solar System Data";
+            // 
+            // lblObjMass
+            // 
+            this.lblObjMass.AutoSize = true;
+            this.lblObjMass.Location = new System.Drawing.Point(116, 53);
+            this.lblObjMass.Name = "lblObjMass";
+            this.lblObjMass.Size = new System.Drawing.Size(14, 15);
+            this.lblObjMass.TabIndex = 5;
+            this.lblObjMass.Text = "0";
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(7, 53);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(86, 15);
+            this.label21.TabIndex = 4;
+            this.label21.Text = "Biggest object:";
             // 
             // lblMomentum
             // 
@@ -768,125 +890,17 @@
             this.label17.TabIndex = 0;
             this.label17.Text = "Total Mass:";
             // 
-            // label21
+            // chkRespawn
             // 
-            this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(7, 53);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(86, 15);
-            this.label21.TabIndex = 4;
-            this.label21.Text = "Biggest object:";
-            // 
-            // lblObjMass
-            // 
-            this.lblObjMass.AutoSize = true;
-            this.lblObjMass.Location = new System.Drawing.Point(116, 53);
-            this.lblObjMass.Name = "lblObjMass";
-            this.lblObjMass.Size = new System.Drawing.Size(14, 15);
-            this.lblObjMass.TabIndex = 5;
-            this.lblObjMass.Text = "0";
-            // 
-            // btnSun
-            // 
-            this.btnSun.BackColor = System.Drawing.Color.DarkRed;
-            this.btnSun.ForeColor = System.Drawing.Color.DarkRed;
-            this.btnSun.Location = new System.Drawing.Point(80, 18);
-            this.btnSun.Name = "btnSun";
-            this.btnSun.Size = new System.Drawing.Size(75, 23);
-            this.btnSun.TabIndex = 10;
-            this.btnSun.UseVisualStyleBackColor = false;
-            this.btnSun.Click += new System.EventHandler(this.btnSun_Click);
-            // 
-            // btnSunRing
-            // 
-            this.btnSunRing.BackColor = System.Drawing.Color.DarkRed;
-            this.btnSunRing.ForeColor = System.Drawing.Color.DarkRed;
-            this.btnSunRing.Location = new System.Drawing.Point(80, 48);
-            this.btnSunRing.Name = "btnSunRing";
-            this.btnSunRing.Size = new System.Drawing.Size(75, 23);
-            this.btnSunRing.TabIndex = 11;
-            this.btnSunRing.UseVisualStyleBackColor = false;
-            this.btnSunRing.Click += new System.EventHandler(this.btnSunRing_Click);
-            // 
-            // label22
-            // 
-            this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(6, 81);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(43, 15);
-            this.label22.TabIndex = 12;
-            this.label22.Text = "Object";
-            // 
-            // label23
-            // 
-            this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(6, 110);
-            this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(70, 15);
-            this.label23.TabIndex = 13;
-            this.label23.Text = "Object Ring";
-            // 
-            // label24
-            // 
-            this.label24.AutoSize = true;
-            this.label24.Location = new System.Drawing.Point(6, 139);
-            this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(61, 15);
-            this.label24.TabIndex = 14;
-            this.label24.Text = "Explosion";
-            // 
-            // label25
-            // 
-            this.label25.AutoSize = true;
-            this.label25.Location = new System.Drawing.Point(6, 167);
-            this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(74, 15);
-            this.label25.TabIndex = 15;
-            this.label25.Text = "Explon. Ring";
-            // 
-            // btnObject
-            // 
-            this.btnObject.BackColor = System.Drawing.Color.DarkRed;
-            this.btnObject.ForeColor = System.Drawing.Color.DarkRed;
-            this.btnObject.Location = new System.Drawing.Point(80, 77);
-            this.btnObject.Name = "btnObject";
-            this.btnObject.Size = new System.Drawing.Size(75, 23);
-            this.btnObject.TabIndex = 16;
-            this.btnObject.UseVisualStyleBackColor = false;
-            this.btnObject.Click += new System.EventHandler(this.btnObject_Click);
-            // 
-            // btnObjectRing
-            // 
-            this.btnObjectRing.BackColor = System.Drawing.Color.DarkRed;
-            this.btnObjectRing.ForeColor = System.Drawing.Color.DarkRed;
-            this.btnObjectRing.Location = new System.Drawing.Point(80, 105);
-            this.btnObjectRing.Name = "btnObjectRing";
-            this.btnObjectRing.Size = new System.Drawing.Size(75, 23);
-            this.btnObjectRing.TabIndex = 17;
-            this.btnObjectRing.UseVisualStyleBackColor = false;
-            this.btnObjectRing.Click += new System.EventHandler(this.btnObjectRing_Click);
-            // 
-            // btnExplosion
-            // 
-            this.btnExplosion.BackColor = System.Drawing.Color.DarkRed;
-            this.btnExplosion.ForeColor = System.Drawing.Color.DarkRed;
-            this.btnExplosion.Location = new System.Drawing.Point(80, 134);
-            this.btnExplosion.Name = "btnExplosion";
-            this.btnExplosion.Size = new System.Drawing.Size(75, 23);
-            this.btnExplosion.TabIndex = 18;
-            this.btnExplosion.UseVisualStyleBackColor = false;
-            this.btnExplosion.Click += new System.EventHandler(this.btnExplosion_Click);
-            // 
-            // btnExplosionRing
-            // 
-            this.btnExplosionRing.BackColor = System.Drawing.Color.DarkRed;
-            this.btnExplosionRing.ForeColor = System.Drawing.Color.DarkRed;
-            this.btnExplosionRing.Location = new System.Drawing.Point(80, 163);
-            this.btnExplosionRing.Name = "btnExplosionRing";
-            this.btnExplosionRing.Size = new System.Drawing.Size(75, 23);
-            this.btnExplosionRing.TabIndex = 19;
-            this.btnExplosionRing.UseVisualStyleBackColor = false;
-            this.btnExplosionRing.Click += new System.EventHandler(this.btnExplosionRing_Click);
+            this.chkRespawn.AutoSize = true;
+            this.chkRespawn.Checked = true;
+            this.chkRespawn.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkRespawn.Location = new System.Drawing.Point(5, 45);
+            this.chkRespawn.Name = "chkRespawn";
+            this.chkRespawn.Size = new System.Drawing.Size(164, 19);
+            this.chkRespawn.TabIndex = 12;
+            this.chkRespawn.Text = "Attrack new stray objects";
+            this.chkRespawn.UseVisualStyleBackColor = true;
             // 
             // Settings
             // 
@@ -999,5 +1013,6 @@
         private System.Windows.Forms.Label label24;
         private System.Windows.Forms.Label label23;
         private System.Windows.Forms.Label label22;
+        private System.Windows.Forms.CheckBox chkRespawn;
     }
 }

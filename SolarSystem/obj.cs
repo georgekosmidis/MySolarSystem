@@ -17,24 +17,24 @@ namespace SolarSystem {
         public int id = 0;
         public static obj cntr;//centered object, everyone goes arround this one
         public bool s = false;//is sun
-        private int sphereRadius = 600;
+       // private int sphereRadius = 600;
 
         public obj( int i, int w, int h, Random r, bool isSun = false ) {
             this.id = i;
             s = isSun;
-            sphereRadius = w > h ? h : w;
+            //sphereRadius = w > h ? h : w;
 
             var phi = this.random( r ) * 360;
             var theta = Math.Acos( this.random( r ) * 2 - 1 );
-            var ra = (sphereRadius / (2 / GLOBALS.SPHERE_SIZE) * Math.Pow( this.random( r ), ((double)1) / 3 ));
+            var ra = (h / (2 / GLOBALS.SPHERE_SIZE) * Math.Pow( this.random( r ), ((double)1) / 3 ));
             this.p.x = ra * Math.Sin( theta ) * Math.Cos( phi ) + w / 2;
             this.p.y = ra * Math.Sin( theta ) * Math.Sin( phi ) + h / 2;
-            this.p.z = ra * Math.Cos( theta ) + (sphereRadius / 2);
+            this.p.z = ra * Math.Cos( theta ) * (Math.Cos( phi ) * Math.Sin( phi )/2) + ((w+h) / 4);
 
             var d = GLOBALS.PLANET_INITIAL_SPEED / Math.Sqrt( this.p.x * this.p.x + this.p.y * this.p.y );
-            this.v.x = this.random( r ) * d * (this.p.y - w / 2);
+            this.v.x = this.random( r ) * d * (this.p.y - h / 2);
             this.v.y = this.random( r ) * d * -(this.p.x - h / 2);
-            this.v.z = this.random( r ) * d * -(this.p.z - sphereRadius / 2);
+            this.v.z = this.random( r ) * d * -(this.p.z - h / 2);
 
             this.m = random( r ) * GLOBALS.PLANET_MASS_MULTIPLIER;
 
@@ -73,8 +73,11 @@ namespace SolarSystem {
             }
             else {
                 var d = (float)(Math.Max( 0, this.p.z ) * (this.r * 2) / (cntr.p.z * 2));//size: actual size to distance
-                var a = (int)Math.Round( Math.Min( Math.Max( 0, this.p.z ), cntr.p.z ) * 255 / cntr.p.z );//transarent when away
+                var a = 255;
+                if (this.p.z < cntr.p.z)
+                    a = (int)Math.Round( this.p.z * 255 / cntr.p.z);
                 a = a < 0 ? 0 : a;
+                a = a > 255 ? 255 : a;
 
                 var sb = new SolidBrush( Color.FromArgb( a, GLOBALS.PLANET_INNER.Color.R, GLOBALS.PLANET_INNER.Color.G, GLOBALS.PLANET_INNER.Color.B ) );
 
@@ -161,7 +164,7 @@ namespace SolarSystem {
 
         }
         public bool isStray() {
-            return (Math.Abs( this.distance( obj.cntr) ) > GLOBALS.STRAY_LIMIT);
+            return (Math.Abs( this.distance( obj.cntr ) ) > GLOBALS.STRAY_LIMIT);
         }
         public void move() {
 

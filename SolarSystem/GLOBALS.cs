@@ -9,28 +9,29 @@ namespace SolarSystem {
     public static class GLOBALS {
         //form
         public static int SUNS_NUM = 1;
-        public static int NUM_OBJECTS = 501;
-        public static double ROTATE_RATE = 0.001;
+        public static int NUM_OBJECTS = 500;
+        public static double ROTATE_RATE = 0.1;
         public static int FPS = 20;//frames per second
-        public static int SEED = Environment.TickCount;
+        public static int SEED = 1;//Environment.TickCount;
 
         //mass and speed
-        public static double SUN_MASS_MULTIPLIER = 1000;//mass multiplier of sun
-        public static double PLANET_INITIAL_SPEED = 5;//bigger sun, bigger speed to escape gravity
-        public static double PLANET_MASS_MULTIPLIER = 20;
+        public static double SUN_MASS_MULTIPLIER = 100000;//mass multiplier of sun
+        public static double PLANET_INITIAL_SPEED = 80;//bigger sun, bigger speed to escape gravity
+        public static double PLANET_MASS_MULTIPLIER = 50;
         public static double SPHERE_SIZE = 1;// times screen height
 
         //tail
-        public static bool SHOW_TAIL = false;
+        public static bool SHOW_TAIL = true;
         public static int TAIL_SIZE = 20;
 
         //remove planets
-        public static int STRAY_LIMIT = 1000000;//remove objects far away
+        public static int STRAY_LIMIT = 10000000;//remove objects far away
         public static double COLLISION_THRESHOLD = 0.5;//collide threshold
         public static double GRAVITY = 0.6674;
+        public static bool RESPAWN = true;
 
         //friction
-        public static double FRICTION = 0.001;//friction
+        public static double FRICTION = 0.01;//friction
         public static double FRICTION_FROM_SPEED = 200;//apply to super fast objects
 
 

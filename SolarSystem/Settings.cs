@@ -37,13 +37,15 @@ namespace SolarSystem {
             btnExplosion.BackColor = GLOBALS.EXPLOSION_INNER.Color;
             btnExplosionRing.BackColor = GLOBALS.EXPLOSION_RING.Color;
 
+            chkRespawn.Checked = GLOBALS.RESPAWN;
+
             numRandom.Value = GLOBALS.SEED;
             isLoaded = true;
             CalcData();
         }
 
         private void StoreData() {
-            if (!isLoaded) return;
+            if ( !isLoaded ) return;
             GLOBALS.SUNS_NUM = (int)numSuns.Value;
             GLOBALS.NUM_OBJECTS = (int)numObjects.Value;
             GLOBALS.ROTATE_RATE = (double)numRotate.Value;
@@ -67,20 +69,22 @@ namespace SolarSystem {
             GLOBALS.EXPLOSION_INNER.Color = btnExplosion.BackColor;
             GLOBALS.EXPLOSION_RING.Color = btnExplosionRing.BackColor;
 
+            GLOBALS.RESPAWN = chkRespawn.Checked;
+
             GLOBALS.SEED = (int)numRandom.Value;
         }
         private void CalcData() {
-            if (!isLoaded) return;
+            if ( !isLoaded ) return;
             Random r = new Random( GLOBALS.SEED );
             double sm = 0;
             double ss = 0;
-            for (var i = 0; i < GLOBALS.SUNS_NUM; i++) {
+            for ( var i = 0; i < GLOBALS.SUNS_NUM; i++ ) {
                 var o = new obj( i, this.Width, this.Height, r, true );
                 sm += o.m;
                 ss += o.speed();
             }
             double mom = 0;
-            for (var i = GLOBALS.SUNS_NUM; i < GLOBALS.NUM_OBJECTS + GLOBALS.SUNS_NUM; i++) {
+            for ( var i = GLOBALS.SUNS_NUM; i < GLOBALS.NUM_OBJECTS + GLOBALS.SUNS_NUM; i++ ) {
                 var o = new obj( i, this.Width, this.Height, r );
                 sm += o.m;
                 mom = o.m > mom ? o.m : mom;
@@ -108,7 +112,7 @@ namespace SolarSystem {
             int i = (d.Color.B << 16) | (d.Color.G << 8) | d.Color.R;
             d.CustomColors = new[] { i };
 
-            if (d.ShowDialog() == DialogResult.OK)
+            if ( d.ShowDialog() == DialogResult.OK )
                 ((Button)sender).BackColor = d.Color;
             StoreData();
         }

@@ -29,11 +29,11 @@ namespace SolarSystem {
             aTimer.Elapsed += aTimer_Elapsed;
 
             Random r = new Random( GLOBALS.SEED );
-            for (var i = 0; i < GLOBALS.SUNS_NUM; i++) {
+            for ( var i = 0; i < GLOBALS.SUNS_NUM; i++ ) {
                 var o = new obj( i, this.Width, this.Height, r, true );
                 _objects.Add( o );
             }
-            for (var i = GLOBALS.SUNS_NUM; i < GLOBALS.NUM_OBJECTS + GLOBALS.SUNS_NUM; i++) {
+            for ( var i = GLOBALS.SUNS_NUM; i < GLOBALS.NUM_OBJECTS + GLOBALS.SUNS_NUM; i++ ) {
                 var o = new obj( i, this.Width, this.Height, r );
                 _objects.Add( o );
             }
@@ -50,7 +50,7 @@ namespace SolarSystem {
             var _newCenter = new _3d();
             _newCenter.set( this.Width / 2, this.Height / 2, (this.Width + this.Height) / 2 );
 
-            for (var i = 1; i < _objects.Count; i++) {
+            for ( var i = 1; i < _objects.Count; i++ ) {
                 var oi = _objects[i];
                 oi.p.x -= _center.x - _newCenter.x;
                 oi.p.y -= _center.y - _newCenter.y;
@@ -64,29 +64,42 @@ namespace SolarSystem {
         private int iYears = 0;
         private void Form1_Paint( object sender, PaintEventArgs e ) {
             var m = new List<obj>();
-            if (IsMouseDown)
+            if ( IsMouseDown )
                 return;
             FindAndCenter( e );
             iYears++;
-            for (var i = 0; i < _objects.Count; i++) {
+            for ( var i = 0; i < _objects.Count; i++ ) {
                 var oi = _objects[i];
-                if (m.Contains( oi ))
+                if ( m.Contains( oi ) )
                     continue;
 
-                if (i > 0 && oi.isStray()) {
-                    m.Add( oi );
+                //if ( i != 0 && Math.Abs( _objects[i].v.x ) < 0.1 )
+                //    MessageBox.Show( "why?" );
+                if ( i > 0 && oi.isStray() ) {
+                    if ( !GLOBALS.RESPAWN )
+                        m.Add( oi );
+                    else {
+                        oi.v.x *= -1 / 10;
+                        oi.v.y *= -1 / 10;
+                        oi.v.z *= -1 / 10;
+                        oi.p.x /= 10;
+                        oi.p.y /= 10;
+                        oi.p.z /= 10;
+                    }
                 }
                 else {
+
                     /*acc*/
-                    for (var j = i + 1; j < _objects.Count; j++) {
+                    for ( var j = i + 1; j < _objects.Count; j++ ) {
+
                         var oj = _objects[j];
-                        if (!oi.isCollided( oj )) {
+                        if ( !oi.isCollided( oj ) ) {
                             oi.acc( oj );
                         }
                         else {
                             var oo = (oi.m < oj.m) ? oi : oj;//smallest goes
                             m.Add( oo );
-                            var d = (float)(oo.r * 10);//smallest to 10, size of explosion
+                            var d = (float)(oo.r * 10);//smallest times 10, size of explosion
                             var np = new Pen( Color.FromArgb( 255, GLOBALS.EXPLOSION_RING.Color.R, GLOBALS.EXPLOSION_RING.Color.G, GLOBALS.EXPLOSION_RING.Color.B ), 1 );
                             oo.Ellipse( e, GLOBALS.EXPLOSION_INNER, np, (float)oo.p.x - d / 2, (float)oo.p.y - d / 2, d );
                         }
@@ -95,9 +108,10 @@ namespace SolarSystem {
                     oi.move();
                     oi.friction();
                 }
+
                 oi.draw( e );
             }
-            foreach (var o in m) {
+            foreach ( var o in m ) {
                 _objects.Remove( o );
             }
 
@@ -108,32 +122,48 @@ namespace SolarSystem {
 
         private void FindAndCenter( PaintEventArgs e ) {
 
-            double am = 0;//_objects.Where( o => !o.s ).Average( o => o.m );
-            double m = _objects.Where( o => o.m >= am ).Sum( o => o.m );
-            double x = _objects.Where( o => o.m >= am ).Sum( o => o.m * o.p.x ) / m;
-            double y = _objects.Where( o => o.m >= am ).Sum( o => o.m * o.p.y ) / m;
-            double z = _objects.Where( o => o.m >= am ).Sum( o => o.m * o.p.z ) / m;
+            var suns = _objects.Where( o => o.s == true ).OrderByDescending( o => o.m );
+            if ( suns.Count() > 0 ) {
+                var o = suns.First();
+                obj.cntr = o;
+                for ( var i = 0; i < _objects.Count; i++ ) {
+                    _objects[i].p.x -= o.p.x;
+                    _objects[i].p.y -= o.p.y;
+                    _objects[i].p.z -= o.p.z;
+                }
 
-          //  var p = new Pen( Color.WhiteSmoke );
-          //  e.Graphics.DrawEllipse( p, (float)x, (float)y, 10, 10 );
+                o.p.x = this.Width / 2;
+                o.p.y = this.Height / 2;
+                o.p.z = (this.Width + this.Height) / 4;                
+            }
+            else {
+                double am = 0;//_objects.Where( o => !o.s ).Average( o => o.m );
+                double m = _objects.Where( o => o.m >= am ).Sum( o => o.m );
+                double x = _objects.Where( o => o.m >= am ).Sum( o => o.m * o.p.x ) / m;
+                double y = _objects.Where( o => o.m >= am ).Sum( o => o.m * o.p.y ) / m;
+                double z = _objects.Where( o => o.m >= am ).Sum( o => o.m * o.p.z ) / m;
 
-            double md = double.PositiveInfinity;
-            //move screen to mass
-            for (var i = 0; i < _objects.Count; i++) {
-                var o = _objects[i];
-                //move objects to center mass
-                o.p.x -= x - this.Width / 2;
-                o.p.y -= y - this.Height / 2;
-                o.p.z -= z - (this.Width + this.Height) / 4;
+                //  var p = new Pen( Color.WhiteSmoke );
+                //  e.Graphics.DrawEllipse( p, (float)x, (float)y, 10, 10 );
 
-                //find closest object to mass and set this as refernce
-                double dx = x - o.p.x;
-                double dy = y - o.p.y;
-                double dz = z - o.p.z;
-                var d = dx * dx + dy * dy + dz * dz;
-                if (d < md) {
-                    md = d;
-                    obj.cntr = o;
+                double md = double.PositiveInfinity;
+                //move screen to mass
+                for ( var i = 0; i < _objects.Count; i++ ) {
+                    var o = _objects[i];
+                    //move objects to center mass
+                    o.p.x -= x - this.Width / 2;
+                    o.p.y -= y - this.Height / 2;
+                    o.p.z -= z - (this.Width + this.Height) / 4;
+
+                    //find closest object to mass and set this as refernce
+                    double dx = x - o.p.x;
+                    double dy = y - o.p.y;
+                    double dz = z - o.p.z;
+                    var d = dx * dx + dy * dy + dz * dz;
+                    if ( d < md ) {
+                        md = d;
+                        obj.cntr = o;
+                    }
                 }
             }
         }
@@ -149,9 +179,9 @@ namespace SolarSystem {
             double mso = double.MaxValue;//mass smallest object
             double ma = 0;//avg mass speed
 
-            for (var i = 0; i < _objects.Count; i++) {
+            for ( var i = 0; i < _objects.Count; i++ ) {
                 var oi = _objects[i];
-                if (oi.s)
+                if ( oi.s )
                     continue;
                 //distance
                 var d = oi.distance( obj.cntr );
@@ -187,7 +217,7 @@ namespace SolarSystem {
         }
         public void WriteTextBox( string value ) {
             try {
-                if (InvokeRequired) {
+                if ( InvokeRequired ) {
                     this.Invoke( new Action<string>( WriteTextBox ), new object[] { value } );
                     return;
                 }
@@ -222,7 +252,7 @@ namespace SolarSystem {
             var st = Math.Sin( theta );
             double x = 0, z = 0;
 
-            for (int i = 0; i < _objects.Count; i += 1) {
+            for ( int i = 0; i < _objects.Count; i += 1 ) {
                 var oi = _objects[i];
                 x = oi.p.x;
                 z = oi.p.z;
@@ -242,7 +272,7 @@ namespace SolarSystem {
             var st = Math.Sin( theta );
             double y = 0, z = 0;
 
-            for (int i = 0; i < _objects.Count; i++) {
+            for ( int i = 0; i < _objects.Count; i++ ) {
                 var oi = _objects[i];
                 y = oi.p.y;
                 z = oi.p.z;
