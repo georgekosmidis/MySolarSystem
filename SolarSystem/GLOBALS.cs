@@ -9,7 +9,7 @@ namespace SolarSystem {
     public static class GLOBALS {
         //form
         public static int SUNS_NUM = 1;
-        public static int NUM_OBJECTS = 500;
+        public static int NUM_OBJECTS = 10;
         public static double ROTATE_RATE = 0.1;
         public static int FPS = 20;//frames per second
         public static int SEED = 1;//Environment.TickCount;
@@ -28,7 +28,7 @@ namespace SolarSystem {
         public static int STRAY_LIMIT = 10000000;//remove objects far away
         public static double COLLISION_THRESHOLD = 0.5;//collide threshold
         public static double GRAVITY = 0.6674;
-        public static bool RESPAWN = true;
+        public static bool RESPAWN = false;
 
         //friction
         public static double FRICTION = 0.01;//friction

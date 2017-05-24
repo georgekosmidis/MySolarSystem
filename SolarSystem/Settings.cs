@@ -98,6 +98,8 @@ namespace SolarSystem {
 
         #region events
         private void btnStart_Click( object sender, EventArgs e ) {
+            StoreData();
+            CalcData();
             var f = new SolarSystem();
             f.Show();
         }

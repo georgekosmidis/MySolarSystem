@@ -120,14 +120,16 @@ namespace SolarSystem {
             double dy = this.p.y - o.p.y;
             double dz = this.p.z - o.p.z;
             var d = dx * dx + dy * dy + dz * dz;
-            if (Math.Abs( d ) <= (this.r + o.r) * GLOBALS.COLLISION_THRESHOLD) {
+            if (Math.Abs( d ) - (this.r + o.r) <= (this.r + o.r) * GLOBALS.COLLISION_THRESHOLD) {
                 //new mass
                 var mass = this.m + o.m;
+                this.m += o.m;
+                this.r = Math.Log10(m);
                 //find biggest
-                var oo = (this.m > o.m) ? this : o;
+                //var oo = (this.m > o.m) ? this : o;
                 //biggest takes mass
-                oo.m = mass;
-                oo.r = Math.Log10( m );
+                //oo.m = mass;
+                //oo.r = Math.Log10( m );
 
                 return true;
             }

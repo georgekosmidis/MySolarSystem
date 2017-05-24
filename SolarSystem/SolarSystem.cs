@@ -67,7 +67,7 @@ namespace SolarSystem {
             if ( IsMouseDown )
                 return;
             FindAndCenter( e );
-            iYears++;
+            iYears++;           
             for ( var i = 0; i < _objects.Count; i++ ) {
                 var oi = _objects[i];
                 if ( m.Contains( oi ) )
@@ -79,12 +79,7 @@ namespace SolarSystem {
                     if ( !GLOBALS.RESPAWN )
                         m.Add( oi );
                     else {
-                        oi.v.x *= -1 / 10;
-                        oi.v.y *= -1 / 10;
-                        oi.v.z *= -1 / 10;
-                        oi.p.x /= 10;
-                        oi.p.y /= 10;
-                        oi.p.z /= 10;
+                        oi = new obj(i, this.Width, this.Height, new Random(GLOBALS.SEED));
                     }
                 }
                 else {
