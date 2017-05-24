@@ -28,7 +28,7 @@ namespace SolarSystem {
         public static int STRAY_LIMIT = 10000000;//remove objects far away
         public static double COLLISION_THRESHOLD = 0.5;//collide threshold
         public static double GRAVITY = 0.6674;
-        public static bool RESPAWN = false;
+        public static bool RESPAWN = true;
 
         //friction
         public static double FRICTION = 0.01;//friction
