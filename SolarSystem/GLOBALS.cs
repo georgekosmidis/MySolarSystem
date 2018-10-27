@@ -16,7 +16,7 @@ namespace SolarSystem {
 
         //mass and speed
         public static double SUN_MASS_MULTIPLIER = 100000;//mass multiplier of sun
-        public static double PLANET_INITIAL_SPEED = 80;//bigger sun, bigger speed to escape gravity
+        public static double PLANET_INITIAL_SPEED = 81;//bigger sun, bigger speed to escape gravity
         public static double PLANET_MASS_MULTIPLIER = 50;
         public static double SPHERE_SIZE = 1;// times screen height
 
